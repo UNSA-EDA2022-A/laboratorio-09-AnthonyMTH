@@ -78,8 +78,17 @@ public class GraphMatrix implements Graph {
     }
 
     public int countConnectedComponents() {
+        int numComponents = 1;
+        ArrayList<Integer> recorridos = depthFirstSearch(0);   // Almacena todos los conectados al primer vértice
 
-        return -1;
+        for (int i = 1; this.numVertices > 0 && i < this.numVertices; i++) {   // Recorre todos los vértices desde el segundo vértice (1)
+            if (!recorridos.contains(i)){   // Verifica que no lo contenga
+                numComponents++; 
+            }
+            if (recorridos.contains(i)) continue;  // Para ahorrar tiempo
+            recorridos = depthFirstSearch(i);
+        }
+        return numComponents;
     }
 
     public static void main(String args[]) {
