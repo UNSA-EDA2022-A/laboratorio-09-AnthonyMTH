@@ -84,13 +84,50 @@ public class GraphAdjacentList implements Graph {
     public void setNumVertices(int numVertices) {
         this.numVertices = numVertices;
     }
+    
+    // Método depthFirstSearch()
+    public ArrayList<Vertex> depthFirstSearch(Vertex n) {
+        return this.depthFirstSearch(n, new ArrayList<Vertex>());
+    }
+
+    public ArrayList<Vertex> depthFirstSearch(Vertex n, ArrayList<Vertex> visited) {
+        visited.add(n);  // Si entra al método, se añade a los visitados
+        for (Vertex vertex : n.adjacentVertices) {  // Recorre todos los adyacentes de este vértice
+            if (!vertices.contains(vertex))  // Si no lo contiene, va a ese
+                depthFirstSearch(vertex, visited);
+        }
+        return visited;
+    }
 
     public int countConnectedComponents(){
-        return -1;
+        int numComponents = 1;
+        ArrayList<Vertex> recorridos = depthFirstSearch(vertices.get(0));   // Almacena todos los conectados al primer vértice
+
+        for (int i = 1; this.numVertices > 0 && i < this.numVertices; i++) {   // Recorre todos los vértices desde el segundo vértice (1)
+            if (!recorridos.contains(vertices.get(i)))   // Verifica que no lo contenga
+                numComponents++; 
+            
+            if (recorridos.contains(vertices.get(i))) continue;  // Para ahorrar tiempo
+            recorridos = depthFirstSearch(vertices.get(i));
+        }
+        return numComponents;
     }
 
     public boolean removeVertex(int vertex){
-        return false;
+        int indexVertice = 0;
+        for (int i = 0; i < vertices.size(); i++) {  // Recorre todos los vértices
+            Vertex aux = vertices.get(i);  // Vértice temporal en el que revisaremos sus nodos adyacentes (aristas)
+
+            if (vertex == this.vertices.get(i).data) indexVertice = i; // Índice de vértice que vamos a eliminar
+
+            for (int j = 0; j < aux.adjacentVertices.size(); j++) {
+                if (vertex == aux.adjacentVertices.get(j).data) // Si algún nodo es igual, lo borramos
+                    aux.removeAdjacentVertex(vertex);
+            }
+        }
+        vertices.remove(indexVertice); // Después de haber eliminado las aristas, se borra el vértice 
+        numVertices--;
+        return true;
     }
 
     public static void main(String args[]) {
